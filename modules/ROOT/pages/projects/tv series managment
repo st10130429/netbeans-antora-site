@@ -1,0 +1,195 @@
+TV Series Management Application
+Requirement Summary
+The objective of this assignment is to develop a TV series management application for a new streaming company. The application must provide a user-friendly menu that allows users to capture, search, update, delete, and print reports of TV series. The application will utilize a Series class to manage the series data, which includes attributes such as seriesId, seriesName, seriesAge, and seriesNumberOfEpisodes. Additionally, the application must handle user input validation and exceptions effectively.
+
+Code Generated
+Below is a Java implementation of the TV series management application, which includes error handling and exception management.
+
+language-java
+ Copy code
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+class Series {
+    private int seriesId;
+    private String seriesName;
+    private int seriesAge;
+    private int seriesNumberOfEpisodes;
+
+    public Series(int seriesId, String seriesName, int seriesAge, int seriesNumberOfEpisodes) {
+        this.seriesId = seriesId;
+        this.seriesName = seriesName;
+        this.seriesAge = seriesAge;
+        this.seriesNumberOfEpisodes = seriesNumberOfEpisodes;
+    }
+
+    public int getSeriesId() {
+        return seriesId;
+    }
+
+    public String getSeriesName() {
+        return seriesName;
+    }
+
+    public int getSeriesAge() {
+        return seriesAge;
+    }
+
+    public int getSeriesNumberOfEpisodes() {
+        return seriesNumberOfEpisodes;
+    }
+
+    @Override
+    public String toString() {
+        return "Series ID: " + seriesId + ", Name: " + seriesName + ", Age Restriction: " + seriesAge + ", Episodes: " + seriesNumberOfEpisodes;
+    }
+}
+
+public class TVSeriesManagement {
+    private static ArrayList<Series> seriesList = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            displayMenu();
+            choice = getUserChoice();
+            switch (choice) {
+                case 1:
+                    captureSeries();
+                    break;
+                case 2:
+                    searchSeries();
+                    break;
+                case 3:
+                    updateSeries();
+                    break;
+                case 4:
+                    deleteSeries();
+                    break;
+                case 5:
+                    printSeriesReport();
+                    break;
+                case 6:
+                    System.out.println("Exiting the application.");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 6);
+    }
+
+    private static void displayMenu() {
+        System.out.println("\nTV Series Management Application");
+        System.out.println("1. Capture a new series");
+        System.out.println("2. Search for a series");
+        System.out.println("3. Update a series description");
+        System.out.println("4. Delete a series");
+        System.out.println("5. Print series report");
+        System.out.println("6. Exit");
+        System.out.print("Enter your choice: ");
+    }
+
+    private static int getUserChoice() {
+        int choice = 0;
+        try {
+            choice = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.next(); // Clear the invalid input
+        }
+        return choice;
+    }
+
+    private static void captureSeries() {
+        try {
+            System.out.print("Enter Series ID: ");
+            int seriesId = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            System.out.print("Enter Series Name: ");
+            String seriesName = scanner.nextLine();
+            System.out.print("Enter Age Restriction (2-18): ");
+            int seriesAge = scanner.nextInt();
+            if (seriesAge < 2 || seriesAge > 18) {
+                throw new IllegalArgumentException("Age restriction must be between 2 and 18.");
+            }
+            System.out.print("Enter Number of Episodes: ");
+            int seriesNumberOfEpisodes = scanner.nextInt();
+            seriesList.add(new Series(seriesId, seriesName, seriesAge, seriesNumberOfEpisodes));
+            System.out.println("Series captured successfully.");
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            scanner.next(); // Clear the invalid input
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void searchSeries() {
+        System.out.print("Enter Series ID to search: ");
+        int seriesId = scanner.nextInt();
+        boolean found = false;
+        for (Series series : seriesList) {
+            if (series.getSeriesId() == seriesId) {
+                System.out.println(series);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Series not found.");
+        }
+    }
+
+    private static void updateSeries() {
+        System.out.print("Enter Series ID to update: ");
+        int seriesId = scanner.nextInt();
+        boolean found = false;
+        for (Series series : seriesList) {
+            if (series.getSeriesId() == seriesId) {
+                System.out.print("Enter new Series Name: ");
+                scanner.nextLine(); // Consume newline
+                String newName = scanner.nextLine();
+                System.out.print("Enter new Age Restriction (2-18): ");
+                int newAge = scanner.nextInt();
+                if (newAge < 2 || newAge > 18) {
+                    throw new IllegalArgumentException("Age restriction must be between 2 and 18.");
+                }
+                System.out.print("Enter new Number of Episodes: ");
+                int newEpisodes = scanner.nextInt();
+                seriesList.set(seriesList.indexOf(series), new Series(seriesId, newName, newAge, newEpisodes));
+                System.out.println("Series updated successfully.");
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Series not found.");
+        }
+    }
+
+    private static void deleteSeries() {
+        System.out.print("Enter Series ID to delete: ");
+        int seriesId = scanner.nextInt();
+        boolean found = false;
+        for (Series series : seriesList) {
+            if (series.getSeriesId() == seriesId) {
+                seriesList.remove(series);
+                System.out.println("Series deleted successfully.");
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Series not found.");
+        }
+    }
+
+    private static void printSeriesReport() {
+        System.out.println("\nSeries Report:");
+        for (Series series : seriesList) {
+            System.out.println(series);
+        }
+    }
+}
